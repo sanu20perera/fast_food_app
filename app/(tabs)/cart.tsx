@@ -11,16 +11,16 @@
 
 // export default cart
 
-import {View, Text, FlatList} from 'react-native'
-import {SafeAreaView} from "react-native-safe-area-context";
-import {useCartStore} from "@/store/cart.store";
-import CustomHeader from "@/components/CustomHeader";
-import cn from "clsx";
-import CustomButton from "@/components/CustomButton";
 import CartItem from "@/components/CartItem";
+import CustomButton from "@/components/CustomButton";
+import { useCartStore } from "@/store/cart.store";
 import { PaymentInfoStripeProps } from '@/type';
-
-const PaymentInfoStripe = ({ label,  value,  labelStyle,  valueStyle, }: PaymentInfoStripeProps) => (
+import { Ionicons } from "@expo/vector-icons";
+import cn from "clsx";
+import { router } from "expo-router";
+import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from "react-native-safe-area-context";
+const PaymentInfoStripe = ({ label, value, labelStyle, valueStyle, }: PaymentInfoStripeProps) => (
     <View className="flex-between flex-row my-1">
         <Text className={cn("paragraph-medium text-gray-200", labelStyle)}>
             {label}
@@ -44,8 +44,34 @@ const Cart = () => {
                 renderItem={({ item }) => <CartItem item={item} />}
                 keyExtractor={(item) => item.id}
                 contentContainerClassName="pb-28 px-5 pt-5"
-                ListHeaderComponent={() => <CustomHeader title="Your Cart" />}
-                ListEmptyComponent={() => <Text>Cart Empty</Text>}
+
+                ListHeaderComponent={() => (
+                    <View className="flex-row items-center justify-between px-1 py-4">
+                        <TouchableOpacity onPress={() => router.back()} className="p-2">
+                            <Ionicons name="arrow-back" size={24} color="#000" />
+                        </TouchableOpacity>
+                        <Text className="text-xl font-bold">Cart</Text>
+                        <View style={{ width: 24 }} />
+                    </View>
+                )}
+
+                ListEmptyComponent={() => (
+                    <View className="items-center justify-center mt-10">
+                        <Image
+                            source={require('../../assets/images/empty-state.png')}
+                            style={{ width: 300, height: 450, marginBottom: 10 }}
+                            resizeMode="contain"
+                        />
+                        <Text className="text-2xl font-bold mb-2 text-gray-800"> Your Cart is Empty</Text>
+                        <TouchableOpacity
+                            onPress={() => router.push('/(tabs)/search')}
+                            className="bg-orange-500 py-3 px-6 rounded-full"
+                        >
+                            <Text className="text-white font-bold text-base">Browse Menu</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
+
                 ListFooterComponent={() => totalItems > 0 && (
                     <View className="gap-5">
                         <View className="mt-6 border border-gray-200 p-5 rounded-2xl">
